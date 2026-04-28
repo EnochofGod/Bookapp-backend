@@ -1,5 +1,12 @@
 const express = require('express')
 const cors = require('cors')
+
+// Check required environment variables
+if (!process.env.JWT_SECRET || !process.env.MONGO_URI) {
+    console.error('Missing required environment variables: JWT_SECRET or MONGO_URI');
+    process.exit(1);
+}
+
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))

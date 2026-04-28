@@ -6,25 +6,36 @@ const User = require('../models/User');
 
 router.post('/register', async (req, res, next) => {
     try{
+        console.log('Register attempt:', req.body);
         const { name, email, password } = req.body;
         if(!name || !email || !password){
-            return res.status(400).json({ error: ' Name, email and password required' });
+            console.log('Missing fields');
+            return res.status(400).json({ error: 'Name, email and password required' });
         }
         if(password.length < 6){
+            console.log('Password too short');
             return res.status(400).json({ error: 'Password must be at least 6 characters' });
         }
+        console.log('Checking existing user');
         const exists = await User.findOne({ email });
-        if(exists) return res.status(400).json({ error: 'Email already in use' });
+        if(exists) {
+            console.log('User exists');
+            return res.status(400).json({ error: 'Email already in use' });
+        }
 
+        console.log('Hashing password');
         const hashed = await bcrypt.hash(password, 10);
+        console.log('Creating user');
         const user = await User.create({ name, email, password: hashed });
 
+        console.log('Signing token');
         const token = jwt.sign(
-            { userId: user._id }, 
-            process.env.JWT_SECRET, 
+            { userId: user._id },
+            process.env.JWT_SECRET,
             { expiresIn: '7d' });
 
-        res.status(201).json({ 
+        console.log('Register success');
+        res.status(201).json({
             message: 'User registered successfully',
             token,
             user: {
@@ -33,6 +44,7 @@ router.post('/register', async (req, res, next) => {
                 email: user.email}
         });
     } catch (err) {
+        console.error('Register error:', err);
         if(err.code === 11000){
             return res.status(400).json({ error: 'Email already in use' });
         }
