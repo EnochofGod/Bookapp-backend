@@ -7,13 +7,9 @@ const authRouter = require('./routes/auth')
 const bookRouter = require('./routes/books')
 const multer = require('multer');
 
-if(process.env.NODE_ENV === 'production'){
-    app.use(cors());
-}else{
-    app.use(cors({
-    origin: 'http://localhost:5173',
-    }))
-}
+app.use(cors({
+  origin: true
+}))
 
 app.use('/auth', authRouter);
 app.use('/books', bookRouter);
