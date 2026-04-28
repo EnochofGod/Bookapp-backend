@@ -14,6 +14,14 @@ const bookSchema = new mongoose.Schema({
     pages:{
         type: Number,
         default: 0
+    },
+    coverUrl:{
+        type: String,
+        default: ''
+    },
+    coverPublicId:{
+        type: String,
+        default: ''
     }
 },
     {timestamps: true}
