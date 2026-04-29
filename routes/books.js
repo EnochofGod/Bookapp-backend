@@ -4,20 +4,20 @@ const Book = require('../models/Book');
 const auth = require('../middleware/auth');
 const cloudinary = require('cloudinary');
 const upload = require('../middleware/upload');
-const streamifier = require('util').promisify(require('stream').PassThrough);
+const streamifier = require('streamifier');
 const softAuth = require('../middleware/softAuth');
 
 
 const uploadToCloudinary = (buffer) => {
     return new Promise((resolve,reject) =>{
-        const stream = cloudinary.Uploader.upload_stream(
+        const stream = cloudinary.uploader.upload_stream(
             {folder: 'books_covers'},
             (error,result) => {
                 if(result) resolve(result)
                 else reject(error);
             }
         );
-        require('stream').Readable.from(buffer).pipe(stream);
+        streamifier.createReadStream(buffer).pipe(stream);
     });
 };
 
@@ -102,13 +102,15 @@ router.get('/:id', async(req,res) =>{
 })
 router.post('/', auth, async (req, res) => {
     try{
-        const { title, author } = req.body;
+        const { title, author, publishedDate, coverUrl } = req.body;
         if(!title || !author) {
             return res.status(400).json({ error: "Title and author are required" });
         }
         const book = await Book.create({
             title,
             author,
+            publishedDate: publishedDate ? new Date(publishedDate) : null,
+            coverUrl: coverUrl || '',
             owner: req.user._id
         });
         res.status(201).json(book);

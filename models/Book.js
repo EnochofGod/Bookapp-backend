@@ -11,6 +11,10 @@ const bookSchema = new mongoose.Schema({
         required: [true, 'Author is required'],
         trim: true
     },
+    publishedDate: {
+        type: Date,
+        default: null
+    },
     pages:{
         type: Number,
         default: 0
@@ -22,6 +26,11 @@ const bookSchema = new mongoose.Schema({
     coverPublicId:{
         type: String,
         default: ''
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 },
     {timestamps: true}
