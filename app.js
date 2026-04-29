@@ -2,8 +2,14 @@ const express = require('express')
 const cors = require('cors')
 
 // Check required environment variables
+console.log('JWT_SECRET present:', !!process.env.JWT_SECRET);
+console.log('MONGO_URI present:', !!process.env.MONGO_URI);
+console.log('JWT_SECRET value:', process.env.JWT_SECRET ? 'SET' : 'NOT SET');
+console.log('MONGO_URI value:', process.env.MONGO_URI ? 'SET' : 'NOT SET');
+
 if (!process.env.JWT_SECRET || !process.env.MONGO_URI) {
     console.error('Missing required environment variables: JWT_SECRET or MONGO_URI');
+    console.error('Available env vars:', Object.keys(process.env).filter(key => key.includes('JWT') || key.includes('MONGO')));
     process.exit(1);
 }
 
