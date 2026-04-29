@@ -72,7 +72,7 @@ router.get('/', softAuth, async (req, res, next) => {
         const skip = (Page - 1) * Limit;
 
         const books = await Book.find(query)
-        .select('title author coverUrl owner createdAt')
+        .select('title author coverUrl owner createdAt publishedDate')
         .sort({ [sortField]: sortOrder })
         .lean()
         .skip(skip)
