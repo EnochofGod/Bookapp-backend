@@ -53,13 +53,27 @@ router.post('/register', async (req, res, next) => {
 });
 
 
+router.get('/me', auth, async (req, res) => {
+    try {
+        res.json({
+            user: {
+                id: req.user._id,
+                name: req.user.name,
+                email: req.user.email
+            }
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
 router.post('/login', async (req, res, next) => {
     try{
         const {email, password } = req.body;
         if(!email || !password){
             return res.status(400).json({ error: 'Email and password required' });
         }
-        
+
         const user = await User.findOne({ email });
         if(!user) return res.status(401).json({ error: 'Invalid credentials' });
 
@@ -67,11 +81,11 @@ router.post('/login', async (req, res, next) => {
         if(!match) return res.status(401).json({ error: 'Invalid credentials' });
 
         const token = jwt.sign(
-            { userId: user._id }, 
-            process.env.JWT_SECRET, 
+            { userId: user._id },
+            process.env.JWT_SECRET,
             { expiresIn: '7d' });
 
-        res.status(201).json({ 
+        res.status(200).json({
             message: 'Login successful',
             token,
             user: {
